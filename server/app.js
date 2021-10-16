@@ -78,12 +78,36 @@ app.post('/links',
 /************************************************************/
 
 app.post('/login', (req, res, next)=>{
-  // TODO
-  // information recieved: username, password
+  //
+  let data = req.body;
+  models.Users.getAll()
+    .then((dbData)=>{
+      var userHere = {
+        present: false,
+        index: null
+      };
+      for (var i = 0; i < dbData.length; i++) {
+        if (data.username === dbData[i].username) {
+          userHere.present = true;
+          userHere.index = i;
+        }
+      }
+      if (!userHere.present) {
+        return res.redirect('/login');
+      } else if (models.Users.compare(data.password, dbData[userHere.index].password, dbData[userHere.index].salt)) {
+        return res.redirect('/');
+      } else {
+        return res.redirect('/login');
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400);
+    });
 });
 
 app.post('/signup', (req, res, next) => {
-  var data = req.body;
+  let data = req.body;
   models.Users.get({username: data.username})
     .then((userInDB) =>{
       if (userInDB) {
@@ -97,7 +121,6 @@ app.post('/signup', (req, res, next) => {
     }).catch((err)=>{
       res.status(400);
     });
-
 });
 
 /************************************************************/

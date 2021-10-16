@@ -183,7 +183,6 @@ describe('', function() {
       request(options, function(error, res, body) {
         if (error) { return done(error); }
         request(options, function(err, response, resBody) {
-          console.log('this is response in test;', response.headers);
           if (err) { return done(err); }
           expect(response.headers.location).to.equal('/signup');
           done();
@@ -278,7 +277,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Sessions Schema:', function() {
+  describe('Sessions Schema:', function() {
     it('contains a sessions table', function(done) {
       var queryString = 'SELECT * FROM sessions';
       db.query(queryString, function(err, results) {
