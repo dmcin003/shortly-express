@@ -24,10 +24,9 @@ module.exports.createSession = (req, res, next) => {
     req.session.hash = sessionId;
     models.Sessions.get({ hash: sessionId })
       .then((data) => {
-        console.log('this is data:', data);
         if (!data) {
           delete req.session;
-          req.cookies = {};
+          delete req.cookies.shortlyid;
           return module.exports.createSession(req, res, next);
         } else if (!data.userId) {
           return next();
