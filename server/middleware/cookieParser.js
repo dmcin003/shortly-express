@@ -1,5 +1,3 @@
-var color = require('colors');
-
 const parseCookies = (req, res, next) => {
   if (!req.headers.cookie) {
     return next();
@@ -13,7 +11,6 @@ const parseCookies = (req, res, next) => {
     item = item.split('=');
     req.cookies[item[0]] = item[1];
   });
-  console.log('this is parse currently: ', parse);
 
   return next();
 };
