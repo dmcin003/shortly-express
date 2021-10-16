@@ -15,7 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(parseCookies);
-// app.use(Auth.createSession);
+app.use(Auth.createSession);
+
 
 
 
@@ -24,6 +25,7 @@ app.get('/',
     res.render('');
   });
 
+//requires a verification
 app.get('/create',
   (req, res) => {
     res.render('index');
@@ -87,17 +89,30 @@ app.post('/login', (req, res, next)=>{
     .then((dbData)=>{
       var userHere = {
         present: false,
-        index: null
+        index: null,
+        userId: null
       };
       for (var i = 0; i < dbData.length; i++) {
         if (data.username === dbData[i].username) {
           userHere.present = true;
           userHere.index = i;
+          userHere.userId = dbData[i].id;
         }
       }
       if (!userHere.present) {
         return res.redirect('/login');
       } else if (models.Users.compare(data.password, dbData[userHere.index].password, dbData[userHere.index].salt)) {
+        // console.log(userHere.userId);
+
+        // models.Sessions.update({ hash: req.session.hash }, { userId: userHere.userId })
+        //   .then((data) => {
+        //     console.log('update data', data);
+        //   })
+        //   .catch((err) => {
+        //     console.log('update error', err);
+        //   });
+
+        // console.log(req.session);
         return res.redirect('/');
       } else {
         return res.redirect('/login');
@@ -127,6 +142,13 @@ app.post('/signup', (req, res, next) => {
     });
 });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+app.get('/signup', (req, res) => {
+  res.render('signup');
+});
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
 // assume the route is a short code and try and handle it here.
