@@ -12,7 +12,7 @@ const parseCookies = (req, res, next) => {
     req.cookies[item[0]] = item[1];
   });
 
-  return next();
+  next();
 };
 
 module.exports = parseCookies;
