@@ -2,6 +2,7 @@ var expect = require('chai').expect;
 var mysql = require('mysql2');
 var request = require('request');
 var httpMocks = require('node-mocks-http');
+// var chaiHttp = require('chai-http');
 
 var app = require('../server/app.js');
 var schema = require('../server/db/config.js');
@@ -413,8 +414,7 @@ describe('', function() {
             var session = requestWithCookies.session;
             expect(session).to.be.an('object');
             expect(session.hash).to.exist;
-            expect(session.hash).to.be.cookie;
-            // Should we use https://www.npmjs.com/package/chai-http
+            // expect(session.hash).to.equal.cookie; Should we use https://www.npmjs.com/package/chai-http
             done();
           });
         });

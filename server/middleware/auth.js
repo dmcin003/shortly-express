@@ -3,13 +3,9 @@ const models = require('../models');
 const Promise = require('bluebird');
 
 module.exports.createSession = (req, res, next) => {
-  console.log('this is our Cookies from shortly id: ', req.cookies);
-  // create session property that is an object on req with hash property
   req.session = Object.create(null);
-  // if no cookies exist then
   let sessionId = req.cookies.shortlyid;
   if (!sessionId) {
-    // assign session object a property called hash
     models.Sessions.create()
       .then((sessionHash) => {
         let id = sessionHash.insertId;
@@ -25,6 +21,16 @@ module.exports.createSession = (req, res, next) => {
         console.log(err);
       });
   } else {
+    req.session.hash = sessionId;
+    res.cookies = Object.create(null);
+    res.cookies.shortlyid = { value: sessionId };
+    return next();
+    // models.Sessions.get({ 'hash': sessionId })
+    //   .then((query) => {
+    //     console.log('hash from query', query.hash);
+    //     req.session.hash = query.hash;
+    //     next();
+    //   });
 
     // look up sessions in db and see if  already exist with current cookie
     // models.Sessions.get(req.session.hash)
