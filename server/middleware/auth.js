@@ -24,7 +24,12 @@ module.exports.createSession = (req, res, next) => {
     req.session.hash = sessionId;
     models.Sessions.get({ hash: sessionId })
       .then((data) => {
-        if (!data.userId) {
+        console.log('this is data:', data);
+        if (!data) {
+          delete req.session;
+          req.cookies = {};
+          return module.exports.createSession(req, res, next);
+        } else if (!data.userId) {
           return next();
         }
         let userId = data.userId;
@@ -32,6 +37,9 @@ module.exports.createSession = (req, res, next) => {
         req.session.user = { username: username };
         req.session.userId = userId;
         next();
+      })
+      .catch((err) => {
+        console.log('Error:', err);
       });
   }
 };
