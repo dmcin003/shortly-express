@@ -392,6 +392,7 @@ describe('', function() {
         createSession(requestWithoutCookie, response, function() {
           var cookies = response.cookies;
           expect(cookies['shortlyid']).to.exist;
+
           expect(cookies['shortlyid'].value).to.exist;
           done();
         });
@@ -412,7 +413,8 @@ describe('', function() {
             var session = requestWithCookies.session;
             expect(session).to.be.an('object');
             expect(session.hash).to.exist;
-            // expect(session.hash).to.be.cookie;  Should we use https://www.npmjs.com/package/chai-http
+            expect(session.hash).to.be.cookie;
+            // Should we use https://www.npmjs.com/package/chai-http
             done();
           });
         });
@@ -446,13 +448,16 @@ describe('', function() {
 
           createSession(requestWithoutCookie, response, function() {
             var hash = requestWithoutCookie.session.hash;
+            console.log('requestWithOutCookie hash:', hash);
+            console.log('checkpoint 1');
             db.query('UPDATE sessions SET userId = ? WHERE hash = ?', [userId, hash], function(error, result) {
-
+              console.log('checkpoint 2');
               var secondResponse = httpMocks.createResponse();
               var requestWithCookies = httpMocks.createRequest();
               requestWithCookies.cookies.shortlyid = hash;
 
               createSession(requestWithCookies, secondResponse, function() {
+                console.log('checkpoint 3');
                 var session = requestWithCookies.session;
                 expect(session).to.be.an('object');
                 expect(session.user.username).to.eq(username);

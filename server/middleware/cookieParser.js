@@ -1,10 +1,11 @@
 const parseCookies = (req, res, next) => {
+  req.cookies = Object.create(null);
+
   if (!req.headers.cookie) {
     return next();
   }
-  req.cookies = Object.create(null);
 
-  var parse = req.headers.cookie;
+  let parse = req.headers.cookie;
   parse = parse.split(';').join().split(', ');
 
   parse.forEach((item) => {
