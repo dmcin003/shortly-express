@@ -22,22 +22,17 @@ module.exports.createSession = (req, res, next) => {
       });
   } else {
     req.session.hash = sessionId;
-    res.cookies = Object.create(null);
-    res.cookies.shortlyid = { value: sessionId };
-    return next();
-    // models.Sessions.get({ 'hash': sessionId })
-    //   .then((query) => {
-    //     console.log('hash from query', query.hash);
-    //     req.session.hash = query.hash;
-    //     next();
-    //   });
-
-    // look up sessions in db and see if  already exist with current cookie
-    // models.Sessions.get(req.session.hash)
-    //   .then((data)=>{
-    //     console.log('Sessions DATA:', data);
-    //   });
-    //
+    models.Sessions.get({ hash: sessionId })
+      .then((data) => {
+        if (!data.userId) {
+          return next();
+        }
+        let userId = data.userId;
+        let username = data.user.username;
+        req.session.user = { username: username };
+        req.session.userId = userId;
+        next();
+      });
   }
 };
 
